@@ -10,11 +10,11 @@ MASK6 = 0b111111
 class imagelib:
 
     @staticmethod
-    def rgb5652888(rgb565, width: int, height: int):
+    def rgb5652rgb888(rgb565, width: int, height: int):
         """
         RGB565 to RGB888.
 
-        reference: https://tinyurl.com/yb5clfez
+        reference: https://tinyurl.com/y8fqbvfm
 
         Parameters
         ----------
@@ -49,11 +49,11 @@ class imagelib:
         return rgb888
 
     @staticmethod
-    def rgb8882565(rgb888: np.ndarray):
+    def rgb8882rgb565(rgb888: np.ndarray):
         """
         RGB888 to RGB565.
 
-        reference: https://tinyurl.com/y8fqbvfm
+        reference: https://tinyurl.com/yb5clfez
 
         Parameters
         ----------
@@ -66,15 +66,40 @@ class imagelib:
             rgb565 image data
         """
 
-        r5 = (rgb888[..., 2] >> 3).astype(np.uint16) << 11
+        r5 = (rgb888[..., 0] >> 3).astype(np.uint16) << 11
         g6 = (rgb888[..., 1] >> 2).astype(np.uint16) << 5
-        b5 = (rgb888[..., 0] >> 3).astype(np.uint16)
+        b5 = (rgb888[..., 2] >> 3).astype(np.uint16)
         rgb565 = r5 | g6 | b5
 
         return rgb565.tobytes()
 
     @staticmethod
-    def read_image(img_name: str):
+    def bgr8882rgb565(bgr888: np.ndarray):
+        """
+        RGB888 to RGB565.
+
+        reference: https://tinyurl.com/yb5clfez
+
+        Parameters
+        ----------
+        bgr888 : np.ndarray
+            rgb888 image data
+
+        Returns
+        -------
+        bytes
+            rgb565 image data
+        """
+
+        r5 = (bgr888[..., 2] >> 3).astype(np.uint16) << 11
+        g6 = (bgr888[..., 1] >> 2).astype(np.uint16) << 5
+        b5 = (bgr888[..., 0] >> 3).astype(np.uint16)
+        rgb565 = r5 | g6 | b5
+
+        return rgb565.tobytes()
+
+    @staticmethod
+    def read_image(img_name: str, cvt_rgb=True):
         """
          read file in binary mode.
 
@@ -82,6 +107,8 @@ class imagelib:
         ----------
         img_name : str
             image name
+        cvt_rgb : bool
+            if convert to RGB
 
         Returns
         -------
@@ -98,7 +125,8 @@ class imagelib:
                 break;
 
             buf = cv2.imread(img_name)
-            buf = cv2.cvtColor(buf, cv2.COLOR_BGR2RGB)
+            if cvt_rgb:
+                buf = cv2.cvtColor(buf, cv2.COLOR_BGR2RGB)
             break;
 
         return buf
