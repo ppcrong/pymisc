@@ -98,6 +98,7 @@ class imagelib:
                 break;
 
             buf = cv2.imread(img_name)
+            buf = cv2.cvtColor(buf, cv2.COLOR_BGR2RGB)
             break;
 
         return buf
