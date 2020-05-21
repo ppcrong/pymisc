@@ -1,4 +1,7 @@
+import cv2
 import numpy as np
+
+from printlib import printlib
 
 MASK5 = 0b011111
 MASK6 = 0b111111
@@ -46,7 +49,7 @@ class imagelib:
         return rgb888
 
     @staticmethod
-    def rgb8882565(rgb888: bytearray):
+    def rgb8882565(rgb888: np.ndarray):
         """
         RGB888 to RGB565.
 
@@ -54,12 +57,12 @@ class imagelib:
 
         Parameters
         ----------
-        rgb888 : bytearray
+        rgb888 : np.ndarray
             rgb888 image data
 
         Returns
         -------
-        bytearray
+        bytes
             rgb565 image data
         """
 
@@ -68,4 +71,33 @@ class imagelib:
         b5 = (rgb888[..., 0] >> 3).astype(np.uint16)
         rgb565 = r5 | g6 | b5
 
-        return rgb565
+        return rgb565.tobytes()
+
+    @staticmethod
+    def read_image(img_name: str):
+        """
+         read file in binary mode.
+
+        Parameters
+        ----------
+        img_name : str
+            image name
+
+        Returns
+        -------
+        np.ndarray
+            image buffer
+        """
+
+        buf = None
+
+        while True:
+            # printlib.print('file_name: {}'.format(file_name))
+            if not img_name or img_name == '':
+                printlib.print('file_name is None or empty!!!')
+                break;
+
+            buf = cv2.imread(img_name)
+            break;
+
+        return buf
