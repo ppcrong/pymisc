@@ -99,9 +99,9 @@ class imagelib:
         return rgb565.tobytes()
 
     @staticmethod
-    def read_image(img_name: str, cvt_rgb=True):
+    def cv2imread(img_name: str, cvt_rgb=True):
         """
-         read file in binary mode.
+         read image file.
 
         Parameters
         ----------
@@ -130,3 +130,62 @@ class imagelib:
             break;
 
         return buf
+
+    @staticmethod
+    def cv2resize(image, width=None, height=None, inter=cv2.INTER_AREA):
+        """
+        image resize and keep the aspect rate of the original image when width is None or height is None.
+
+        ps. cv2 only accepts RGB888 format.
+
+        reference: https://tinyurl.com/ych3b4mr
+
+        Parameters
+        ----------
+        image : np.ndarray
+            image buffer
+        width : int
+            width
+        height : int
+            height
+        inter : int
+            interpolation
+
+        Returns
+        -------
+        np.ndarray
+            resized buffer
+        """
+        # initialize the dimensions of the image to be resized and
+        # grab the image size
+        dim = None
+        (h, w) = image.shape[:2]
+
+        # if both the width and height are None, then return the
+        # original image
+        if width is None and height is None:
+            return image
+
+        # check to see if the width is None
+        if width is None:
+            # calculate the ratio of the height and construct the
+            # dimensions
+            r = height / float(h)
+            dim = (int(w * r), height)
+
+        # otherwise, the height is None
+        elif height is None:
+            # calculate the ratio of the width and construct the
+            # dimensions
+            r = width / float(w)
+            dim = (width, int(h * r))
+
+        # both height/width are not None, it won't keep aspect ratio
+        else:
+            dim = (width, height)
+
+        # resize the image
+        resized = cv2.resize(image, dim, interpolation=inter)
+
+        # return the resized image
+        return resized
