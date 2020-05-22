@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from PIL import Image, UnidentifiedImageError
 
 from printlib import printlib
 
@@ -27,23 +28,23 @@ class imagelib:
 
         Returns
         -------
-        bytearray
+        np.ndarray
             rgb888 image data
         """
 
         # convert to ndarray (height, width, channel)
         if type(rgb565) is bytes:
-            rgb888 = np.frombuffer(rgb565, dtype=np.uint8).reshape(height, width, 2)
+            rgb565 = np.frombuffer(rgb565, dtype=np.uint8).reshape(height, width, 2)
         elif type(rgb565) is bytearray:
-            rgb888 = np.array(rgb565, dtype=np.uint8).reshape(height, width, 2)
+            rgb565 = np.array(rgb565, dtype=np.uint8).reshape(height, width, 2)
         # convert WxHx2 array of uint8 into WxH array of uint16
-        byte0 = rgb888[:, :, 0].astype(np.uint16)
-        byte1 = rgb888[:, :, 1].astype(np.uint16)
-        rgb888 = (byte0 | byte1 << 8)
+        byte0 = rgb565[:, :, 0].astype(np.uint16)
+        byte1 = rgb565[:, :, 1].astype(np.uint16)
+        rgb565 = (byte0 | byte1 << 8)
         # convert 565 to 888
-        b8 = (rgb888 & MASK5) << 3
-        g8 = ((rgb888 >> 5) & MASK6) << 2
-        r8 = ((rgb888 >> (5 + 6)) & MASK5) << 3
+        b8 = (rgb565 & MASK5) << 3
+        g8 = ((rgb565 >> 5) & MASK6) << 2
+        r8 = ((rgb565 >> (5 + 6)) & MASK5) << 3
         rgb888 = np.dstack((r8, g8, b8)).astype(np.uint8)
 
         return rgb888
@@ -76,14 +77,14 @@ class imagelib:
     @staticmethod
     def bgr8882rgb565(bgr888: np.ndarray):
         """
-        RGB888 to RGB565.
+        BGR888 to RGB565.
 
         reference: https://tinyurl.com/yb5clfez
 
         Parameters
         ----------
         bgr888 : np.ndarray
-            rgb888 image data
+            bgr888 image data
 
         Returns
         -------
@@ -189,3 +190,40 @@ class imagelib:
 
         # return the resized image
         return resized
+
+    @staticmethod
+    def pilopen(img_name: str):
+        """
+         read image file.
+
+        Parameters
+        ----------
+        img_name : str
+            image name
+
+        Returns
+        -------
+        PIL.Image.Image
+            pil image object
+        """
+
+        buf = None
+
+        while True:
+            # printlib.print('file_name: {}'.format(file_name))
+            if not img_name or img_name == '':
+                printlib.print('file_name is None or empty!!!')
+                break;
+
+            try:
+                buf = Image.open(img_name)
+            except FileNotFoundError as e:
+                printlib.print('FileNotFoundError: {}'.format(e))
+            except UnidentifiedImageError as e:
+                printlib.print('UnidentifiedImageError: {}'.format(e))
+            except ValueError as e:
+                printlib.print('ValueError: {}'.format(e))
+
+            break;
+
+        return buf
