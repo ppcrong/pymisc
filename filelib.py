@@ -77,14 +77,12 @@ class filelib:
             try:
                 with open(file_name, "rb") as f:
                     buf = f.read()
-                    # printlib.print('len(buf): {}'.format(len(buf)))
-                    break;
             except IOError as e:
                 printlib.print('Cannot open or read file ({})..'.format(e))
-                break;
             except TypeError as e:
                 printlib.print('TypeError to read file ({})..'.format(e))
-                break;
+
+            break;
 
         return buf
 
