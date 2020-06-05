@@ -123,12 +123,12 @@ class imagelib:
             # printlib.print('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
                 printlib.print('file_name is None or empty!!!')
-                break;
+                break
 
             buf = cv2.imread(img_name)
             if cvt_rgb:
                 buf = cv2.cvtColor(buf, cv2.COLOR_BGR2RGB)
-            break;
+            break
 
         return buf
 
@@ -208,7 +208,7 @@ class imagelib:
             # printlib.print('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
                 printlib.print('file_name is None or empty!!!')
-                break;
+                break
 
             try:
                 buf = Image.open(img_name)
@@ -219,7 +219,7 @@ class imagelib:
             except ValueError as e:
                 printlib.print('ValueError: {}'.format(e))
 
-            break;
+            break
 
         return buf
 

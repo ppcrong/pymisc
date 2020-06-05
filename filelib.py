@@ -28,24 +28,24 @@ class filelib:
             if not file_name or file_name == '':
                 printlib.print('file_name is None or empty!!!')
                 ret = False
-                break;
+                break
             if not buf:
                 printlib.print('buf is None!!!')
                 ret = False
-                break;
+                break
 
             try:
                 with open(file_name, 'wb') as f:
                     f.write(buf)
-                    break;
+                    break
             except IOError as e:
                 printlib.print('Cannot open or write file ({})..'.format(e))
                 ret = False
-                break;
+                break
             except TypeError as e:
                 printlib.print('TypeError to write file ({})..'.format(e))
                 ret = False
-                break;
+                break
 
         printlib.print('ret: {}'.format(ret))
         return ret
@@ -72,7 +72,7 @@ class filelib:
             # printlib.print('file_name: {}'.format(file_name))
             if not file_name or file_name == '':
                 printlib.print('file_name is None or empty!!!')
-                break;
+                break
 
             try:
                 with open(file_name, "rb") as f:
@@ -82,7 +82,7 @@ class filelib:
             except TypeError as e:
                 printlib.print('TypeError to read file ({})..'.format(e))
 
-            break;
+            break
 
         return buf
 
