@@ -2,13 +2,14 @@ import cv2
 import numpy as np
 from PIL import Image, UnidentifiedImageError
 
-from printlib import printlib
+from loglib import loglib
 
 MASK5 = 0b011111
 MASK6 = 0b111111
 
 
 class imagelib:
+    logger = loglib(__name__)
 
     @staticmethod
     def rgb5652rgb888(rgb565, width: int, height: int):
@@ -120,9 +121,9 @@ class imagelib:
         buf = None
 
         while True:
-            # printlib.print('file_name: {}'.format(file_name))
+            # imagelib.logger.info('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
-                printlib.print('file_name is None or empty!!!')
+                imagelib.logger.error('file_name is None or empty!!!')
                 break
 
             buf = cv2.imread(img_name)
@@ -205,19 +206,19 @@ class imagelib:
         buf = None
 
         while True:
-            # printlib.print('file_name: {}'.format(file_name))
+            # imagelib.logger.info('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
-                printlib.print('file_name is None or empty!!!')
+                imagelib.logger.error('file_name is None or empty!!!')
                 break
 
             try:
                 buf = Image.open(img_name)
             except FileNotFoundError as e:
-                printlib.print('FileNotFoundError: {}'.format(e))
+                imagelib.logger.error('FileNotFoundError: {}'.format(e))
             except UnidentifiedImageError as e:
-                printlib.print('UnidentifiedImageError: {}'.format(e))
+                imagelib.logger.error('UnidentifiedImageError: {}'.format(e))
             except ValueError as e:
-                printlib.print('ValueError: {}'.format(e))
+                imagelib.logger.error('ValueError: {}'.format(e))
 
             break
 
