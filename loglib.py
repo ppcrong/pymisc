@@ -1,5 +1,4 @@
 import datetime
-import getpass
 import logging
 import os
 
@@ -7,10 +6,9 @@ from printlib import printlib
 
 
 class loglib:
-    def __init__(self):
-        # get logger
-        self.user = getpass.getuser()
-        self.logger = logging.getLogger(self.user)
+    def __init__(self, module=None):
+        # get logger per module
+        self.logger = logging.getLogger(module)
         self.logger.setLevel(logging.DEBUG)
         format = '%(message)s'
         self.formatter = logging.Formatter(format)
