@@ -1,3 +1,4 @@
+import datetime
 import inspect
 
 
@@ -19,7 +20,11 @@ class printlib:
         # Get line number
         the_line_number = stack[1][0].f_lineno
 
+        # Get time
+        timestamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
         if the_class:
-            print("[{}.{}#{}] {}".format(the_class, the_method, the_line_number, " ".join(map(str, args))), **kwargs)
+            print(
+                "{} [{}.{}#{}] {}".format(timestamp, the_class, the_method, the_line_number, " ".join(map(str, args))),
+                **kwargs)
         else:
-            print("[{}#{}] {}".format(the_method, the_line_number, " ".join(map(str, args))), **kwargs)
+            print("{} [{}#{}] {}".format(timestamp, the_method, the_line_number, " ".join(map(str, args))), **kwargs)
