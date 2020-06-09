@@ -21,7 +21,7 @@ class printlib:
         the_line_number = stack[1][0].f_lineno
 
         # Get time
-        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')[:-3]
         if the_class:
             print(
                 "{} [{}.{}#{}] {}".format(timestamp, the_class, the_method, the_line_number, " ".join(map(str, args))),
