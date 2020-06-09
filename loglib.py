@@ -53,45 +53,42 @@ class loglib:
         self.logger.addHandler(self.filehandler)
 
     # region [just log]
-    def d(self, msg):
+    def d(self, msg=''):
         self.logger.debug(msg)
 
-    def i(self, msg):
+    def i(self, msg=''):
         self.logger.info(msg)
 
-    def w(self, msg):
+    def w(self, msg=''):
         self.logger.warning(msg)
 
-    def e(self, msg):
+    def e(self, msg=''):
         self.logger.error(msg)
 
-    def c(self, msg):
+    def c(self, msg=''):
         self.logger.critical(msg)
 
-    def l(self, level, msg):
+    def l(self, level, msg=''):
         self.logger.log(level, msg)
-
-    def setLevel(self, level):
-        self.logger.setLevel(level)
     # endregion [just log]
 
     # region [log with caller info]
-    def debug(self, msg):
+    def debug(self, msg=''):
         self.logger.debug('D/{} {}'.format(printlib.get_caller_info(2), msg))
 
-    def info(self, msg):
+    def info(self, msg=''):
         self.logger.info('I/{} {}'.format(printlib.get_caller_info(2), msg))
 
-    def warning(self, msg):
+    def warning(self, msg=''):
         self.logger.warning('W/{} {}'.format(printlib.get_caller_info(2), msg))
 
-    def error(self, msg):
+    def error(self, msg=''):
         self.logger.error('E/{} {}'.format(printlib.get_caller_info(2), msg))
 
-    def critical(self, msg):
+    def critical(self, msg=''):
         self.logger.critical('C/{} {}'.format(printlib.get_caller_info(2), msg))
 
-    def log(self, level, msg):
+    def log(self, level, msg=''):
         self.logger.log(level, '{}/{} {}'.format(logging.getLevelName(level), printlib.get_caller_info(2), msg))
     # endregion [log with caller info]
 
