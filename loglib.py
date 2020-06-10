@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import sys
 
 from printlib import printlib
 
@@ -14,7 +15,7 @@ class loglib:
         self.formatter = logging.Formatter(format)
 
         # console handler
-        self.consolehandler = logging.StreamHandler()
+        self.consolehandler = logging.StreamHandler(sys.stdout)
         self.consolehandler.setFormatter(self.formatter)
         self.logger.addHandler(self.consolehandler)
 
