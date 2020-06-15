@@ -41,7 +41,7 @@ class vslib:
 
     def read(self):
         self.read_lock.acquire()
-        if self.frame:
+        if self.frame is not None:
             frame = self.frame.copy()
         else:
             self.logger.error('frame is None!!!')
