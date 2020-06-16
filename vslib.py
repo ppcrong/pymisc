@@ -54,6 +54,9 @@ class vslib:
         if self.thread and self.thread.is_alive():
             self.thread.join()
 
+    def is_opened(self):
+        return self.stream.isOpened()
+
     def __exit__(self, exc_type, exc_value, traceback):
         self.stream.release()
 
