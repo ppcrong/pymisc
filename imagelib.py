@@ -206,6 +206,7 @@ class imagelib:
         tuple : a tuple containing:
             - width (int): image width
             - height (int): image height
+            - image_info (dict): image info
             - buf (bytes): image rgb565 data
         """
 
@@ -214,7 +215,7 @@ class imagelib:
 
         if pilimage is None:
             imagelib.logger.error('pilimage is None!!!')
-            return 0, 0, None
+            return 0, 0, None, None
 
         image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
         imagelib.logger.info(image_info)
@@ -226,7 +227,7 @@ class imagelib:
         buf = np.array(pilimage)
         if buf is None:
             imagelib.logger.error('Read image fail!!!')
-            return 0, 0, None
+            return 0, 0, None, None
 
         # resize image when both w/h are not 0
         if resize_width != 0 and resize_height != 0:
@@ -241,7 +242,7 @@ class imagelib:
             # RGB565
             buf = buf.tobytes()
 
-        return width, height, buf
+        return width, height, image_info, buf
 
     @staticmethod
     def pilopen(img_name: str):
