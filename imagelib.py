@@ -188,6 +188,62 @@ class imagelib:
         return resized
 
     @staticmethod
+    def im2rgb565(file: str, resize_width=0, resize_height=0):
+        """
+        convert image (jpg,bmp...etc) to raw rgb565 for yolo.
+
+        Parameters
+        ----------
+        file : str
+            file name
+        resize_width : int
+            resize width, resize when both w/h are not 0
+        resize_height : int
+            resize height, resize when both w/h are not 0
+
+        Returns
+        -------
+        tuple : a tuple containing:
+            - width (int): image width
+            - height (int): image height
+            - buf (bytes): image rgb565 data
+        """
+
+        # get image info
+        pilimage = imagelib.pilopen(file)
+
+        if pilimage is None:
+            imagelib.logger.error('pilimage is None!!!')
+            return 0, 0, None
+
+        image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
+        imagelib.logger.info(image_info)
+
+        # assign image size
+        (height, width) = pilimage.size
+
+        # convert to ndarray
+        buf = np.array(pilimage)
+        if buf is None:
+            imagelib.logger.error('Read image fail!!!')
+            return 0, 0, None
+
+        # resize image when both w/h are not 0
+        if resize_width != 0 and resize_height != 0:
+            (height, width) = (resize_height, resize_width)
+            buf = imagelib.cv2resize(buf, width, height)
+
+        # convert rgb888 to rgb565 (bytes)
+        if buf.shape[2] == 3 or buf.shape[2] == 4:
+            # RGB888 or RGBA
+            buf = imagelib.rgb8882rgb565(buf)
+        else:
+            # RGB565
+            buf = buf.tobytes()
+
+        return width, height, buf
+
+    @staticmethod
     def pilopen(img_name: str):
         """
          read image file.
