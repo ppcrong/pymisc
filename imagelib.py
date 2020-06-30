@@ -101,7 +101,7 @@ class imagelib:
         return rgb565.tobytes()
 
     @staticmethod
-    def cv2imread(img_name: str, cvt_rgb=True):
+    def cv2imread(img_name: str, cvt_rgb: bool = True):
         """
          read image file.
 
@@ -134,9 +134,9 @@ class imagelib:
         return buf
 
     @staticmethod
-    def cv2resize(image, width=None, height=None, inter=cv2.INTER_AREA):
+    def cv2resize(image: np.ndarray, width: int = 0, height: int = 0, inter: int = cv2.INTER_AREA):
         """
-        image resize and keep the aspect rate of the original image when width is None or height is None.
+        image resize and keep the aspect rate of the original image when width is 0 or height is 0.
 
         ps. cv2 only accepts RGB888 format.
 
@@ -161,23 +161,23 @@ class imagelib:
         # grab the image size
         (h, w) = image.shape[:2]
 
-        # if both the width and height are None, then return the original image
-        if width is None and height is None:
+        # if both the width and height are 0, then return the original image
+        if width == 0 and height == 0:
             return image
 
-        # check to see if the width is None
-        if width is None:
+        # check to see if the width is 0
+        if width == 0:
             # calculate the ratio of the height and construct the dimensions
             r = height / float(h)
             dim = (int(w * r), height)
 
-        # otherwise, the height is None
-        elif height is None:
+        # otherwise, the height is 0
+        elif height == 0:
             # calculate the ratio of the width and construct the dimensions
             r = width / float(w)
             dim = (width, int(h * r))
 
-        # both height/width are not None, it won't keep aspect ratio
+        # both height/width are not 0, it won't keep aspect ratio
         else:
             dim = (width, height)
 
@@ -188,7 +188,7 @@ class imagelib:
         return resized
 
     @staticmethod
-    def im2rgb565(file: str, resize_width=0, resize_height=0):
+    def im2rgb565(file: str, resize_width: int = 0, resize_height: int = 0):
         """
         convert image (jpg,bmp...etc) to raw rgb565 for yolo.
 
@@ -282,9 +282,9 @@ class imagelib:
         return buf
 
     @staticmethod
-    def pilresize(image, width=None, height=None):
+    def pilresize(image: np.ndarray, width: int = 0, height: int = 0):
         """
-        image resize and keep the aspect rate of the original image when width is None or height is None.
+        image resize and keep the aspect rate of the original image when width is 0 or height is 0.
 
         reference: https://tinyurl.com/ych3b4mr
 
@@ -305,23 +305,23 @@ class imagelib:
         # grab the image size
         (h, w) = image.shape[:2]
 
-        # if both the width and height are None, then return the original image
-        if width is None and height is None:
+        # if both the width and height are 0, then return the original image
+        if width == 0 and height == 0:
             return image
 
-        # check to see if the width is None
-        if width is None:
+        # check to see if the width is 0
+        if width == 0:
             # calculate the ratio of the height and construct the dimensions
             r = height / float(h)
             dim = (int(w * r), height)
 
-        # otherwise, the height is None
-        elif height is None:
+        # otherwise, the height is 0
+        elif height == 0:
             # calculate the ratio of the width and construct the dimensions
             r = width / float(w)
             dim = (width, int(h * r))
 
-        # both height/width are not None, it won't keep aspect ratio
+        # both height/width are not 0, it won't keep aspect ratio
         else:
             dim = (width, height)
 

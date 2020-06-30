@@ -31,7 +31,7 @@ class printlib:
             print("{} [{}#{}] {}".format(timestamp, the_method, the_line_number, " ".join(map(str, args))), **kwargs)
 
     @staticmethod
-    def get_caller_info(level=1):
+    def get_caller_info(level: int = 1):
         stack = inspect.stack()
 
         # Get class name
