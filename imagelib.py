@@ -221,7 +221,7 @@ class imagelib:
         imagelib.logger.info(image_info)
 
         # assign image size
-        (height, width) = pilimage.size
+        (width, height) = pilimage.size
 
         # convert to ndarray
         buf = np.array(pilimage)
