@@ -188,9 +188,42 @@ class imagelib:
         return resized
 
     @staticmethod
+    def getiminfo(file: str):
+        """
+        get image (jpg,bmp...etc) info (width, height, channel).
+
+        Parameters
+        ----------
+        file : str
+            file name
+
+        Returns
+        -------
+        tuple : a tuple containing:
+            - width (int): image width
+            - height (int): image height
+            - channel (int): image channel
+        """
+
+        # get image info
+        pilimage = imagelib.pilopen(file)
+
+        if pilimage is None:
+            imagelib.logger.error('pilimage is None!!!')
+            return 0, 0, 0
+
+        # assign image size
+        (width, height) = pilimage.size
+
+        # assign channel
+        channel = len(pilimage.getbands())
+
+        return width, height, channel
+
+    @staticmethod
     def im2rgb565(file: str, resize_width: int = 0, resize_height: int = 0):
         """
-        convert image (jpg,bmp...etc) to raw rgb565 for yolo.
+        convert image (jpg,bmp...etc) to rgb565.
 
         Parameters
         ----------
@@ -206,7 +239,7 @@ class imagelib:
         tuple : a tuple containing:
             - width (int): image width
             - height (int): image height
-            - image_info (dict): image info
+            - image_info (dict): image info (format, size, mode)
             - buf (bytes): image rgb565 data
         """
 
@@ -226,7 +259,7 @@ class imagelib:
         # convert to ndarray
         buf = np.array(pilimage)
         if buf is None:
-            imagelib.logger.error('Read image fail!!!')
+            imagelib.logger.error('convert image fail!!!')
             return 0, 0, None, None
 
         # resize image when both w/h are not 0
@@ -234,8 +267,8 @@ class imagelib:
             (height, width) = (resize_height, resize_width)
             buf = imagelib.cv2resize(buf, width, height)
 
-        # convert rgb888 to rgb565 (bytes)
-        if buf.shape[2] == 3 or buf.shape[2] == 4:
+        # convert rgb888 to rgb565
+        if len(pilimage.getbands()) > 2:
             # RGB888 or RGBA
             buf = imagelib.rgb8882rgb565(buf)
         else:
