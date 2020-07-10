@@ -262,6 +262,8 @@ class imagelib:
             imagelib.logger.error('convert image fail!!!')
             return 0, 0, None, None
 
+        # [TODO] need to check channels for 1. cv2 resize and 2. convert rgb565 below
+
         # resize image when both w/h are not 0
         if resize_width != 0 and resize_height != 0:
             (height, width) = (resize_height, resize_width)
