@@ -239,6 +239,7 @@ class imagelib:
         tuple : a tuple containing:
             - width (int): image width
             - height (int): image height
+            - channel (int): image channel
             - image_info (dict): image info (format, size, mode)
             - buf (bytes): image rgb565 data
         """
@@ -253,8 +254,9 @@ class imagelib:
         image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
         imagelib.logger.info(image_info)
 
-        # assign image size
+        # assign image size and channel
         (width, height) = pilimage.size
+        channel = len(pilimage.getbands())
 
         # convert to ndarray
         buf = np.array(pilimage)
@@ -270,14 +272,14 @@ class imagelib:
             buf = imagelib.cv2resize(buf, width, height)
 
         # convert rgb888 to rgb565
-        if len(pilimage.getbands()) > 2:
+        if len(channel) > 2:
             # RGB888 or RGBA
             buf = imagelib.rgb8882rgb565(buf)
         else:
             # RGB565
             buf = buf.tobytes()
 
-        return width, height, image_info, buf
+        return width, height, channel, image_info, buf
 
     @staticmethod
     def pilopen(img_name: str):
