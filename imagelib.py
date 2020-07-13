@@ -272,7 +272,7 @@ class imagelib:
             buf = imagelib.cv2resize(buf, width, height)
 
         # convert rgb888 to rgb565
-        if len(channel) > 2:
+        if channel > 2:
             # RGB888 or RGBA
             buf = imagelib.rgb8882rgb565(buf)
         else:
