@@ -12,13 +12,13 @@ class imagelib:
     logger = loglib(__name__)
 
     @staticmethod
-    def rgb88882rgb888(rgb8888, width: int, height: int):
+    def rgba2rgb888(rgba, width: int, height: int):
         """
-        RGB8888 (RGBA) to RGB888.
+        RGBA to RGB888.
 
         Parameters
         ----------
-        rgb8888 : bytes or bytearray
+        rgba : bytes or bytearray
             rgb8888 image data
         width : int
             width of image
@@ -34,10 +34,10 @@ class imagelib:
         rgb888 = None
 
         try:
-            if type(rgb8888) is bytes:
-                rgba = np.frombuffer(rgb8888, dtype=np.uint8).reshape(height, width, 4)
-            elif type(rgb8888) is bytearray:
-                rgba = np.array(rgb8888, dtype=np.uint8).reshape(height, width, 4)
+            if type(rgba) is bytes:
+                rgba = np.frombuffer(rgba, dtype=np.uint8).reshape(height, width, 4)
+            elif type(rgba) is bytearray:
+                rgba = np.array(rgba, dtype=np.uint8).reshape(height, width, 4)
             rgb888 = cv2.cvtColor(rgba, cv2.COLOR_RGBA2RGB)
         except ValueError as e:
             imagelib.logger.error('ValueError: {}'.format(e))
@@ -259,7 +259,7 @@ class imagelib:
         return width, height, channel
 
     @staticmethod
-    def im2rgb888(buffer, width: int, height: int, channel: int):
+    def buf2rgb888(buffer, width: int, height: int, channel: int):
         """
         convert buffer to rgb888.
 
@@ -288,8 +288,99 @@ class imagelib:
         elif channel == 3:
             rgb888 = np.frombuffer(buffer, dtype=np.uint8).reshape(height, width, 3)
         elif channel == 4:
-            rgb888 = imagelib.rgb88882rgb888(buffer, width, height)
+            rgb888 = imagelib.rgba2rgb888(buffer, width, height)
         return rgb888
+
+    @staticmethod
+    def buf2rgb565(buffer, width: int, height: int, channel: int):
+        """
+        convert buffer to rgb565.
+
+        Parameters
+        ----------
+        buffer : bytes or bytearray
+            image data
+        width : int
+            width of image
+        height : int
+            height of image
+        channel : int
+            color channel
+
+        Returns
+        -------
+        np.ndarray
+            rgb565 image data
+        """
+
+        rgb565 = None
+        if channel == 1:
+            return NotImplemented
+        elif channel == 2:
+            rgb565 = np.frombuffer(buffer, dtype=np.uint8).reshape(height, width, 2)
+        elif channel == 3:
+            rgb565 = imagelib.rgb8882rgb565(buffer)
+        elif channel == 4:
+            buffer = imagelib.rgba2rgb888(buffer, width, height)
+            rgb565 = imagelib.rgb8882rgb565(buffer)
+        return rgb565
+
+    @staticmethod
+    def im2rgb888(file: str, resize_width: int = 0, resize_height: int = 0):
+        """
+        convert image (jpg,bmp...etc) to rgb888.
+
+        Parameters
+        ----------
+        file : str
+            file name
+        resize_width : int
+            resize width, resize when both w/h are not 0
+        resize_height : int
+            resize height, resize when both w/h are not 0
+
+        Returns
+        -------
+        tuple : a tuple containing:
+            - width (int): image width
+            - height (int): image height
+            - channel (int): image channel
+            - image_info (dict): image info (format, size, mode)
+            - buf (bytes): image rgb888 data
+        """
+
+        # get image info
+        pilimage = imagelib.pilopen(file)
+
+        if pilimage is None:
+            imagelib.logger.error('pilimage is None!!!')
+            return 0, 0, 0, None, None
+
+        image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
+        imagelib.logger.info(image_info)
+
+        # assign image size and channel
+        (width, height) = pilimage.size
+        channel = len(pilimage.getbands())
+
+        # resize image when both w/h are not 0
+        if resize_width != 0 and resize_height != 0:
+            (height, width) = (resize_height, resize_width)
+            pilimage.resize((resize_width, resize_height))
+
+        if channel == 3:
+            # RGB888
+            pass
+        else:
+            pilimage.convert('RGB')
+
+        # convert to ndarray
+        buf = np.array(pilimage)
+        if buf is None:
+            imagelib.logger.error('convert image fail!!!')
+            return 0, 0, 0, None, None
+
+        return width, height, channel, image_info, buf
 
     @staticmethod
     def im2rgb565(file: str, resize_width: int = 0, resize_height: int = 0):
@@ -320,7 +411,7 @@ class imagelib:
 
         if pilimage is None:
             imagelib.logger.error('pilimage is None!!!')
-            return 0, 0, None, None
+            return 0, 0, 0, None, None
 
         image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
         imagelib.logger.info(image_info)
@@ -329,25 +420,23 @@ class imagelib:
         (width, height) = pilimage.size
         channel = len(pilimage.getbands())
 
+        # resize image when both w/h are not 0
+        if resize_width != 0 and resize_height != 0:
+            (height, width) = (resize_height, resize_width)
+            pilimage.resize((resize_width, resize_height))
+
         # convert to ndarray
         buf = np.array(pilimage)
         if buf is None:
             imagelib.logger.error('convert image fail!!!')
-            return 0, 0, None, None
+            return 0, 0, 0, None, None
 
-        # [TODO] need to check channels for 1. cv2 resize and 2. convert rgb565 below
-
-        # resize image when both w/h are not 0
-        if resize_width != 0 and resize_height != 0:
-            (height, width) = (resize_height, resize_width)
-            buf = imagelib.cv2resize(buf, width, height)
-
-        # convert rgb888 to rgb565
-        if channel > 2:
+        # for pillow, mode should be 'RGB' or 'L'
+        if channel >= 3:
             # RGB888 or RGBA
             buf = imagelib.rgb8882rgb565(buf)
-        else:
-            # RGB565
+        elif channel <= 2:
+            # RGB565 or gray
             buf = buf.tobytes()
 
         return width, height, channel, image_info, buf
@@ -439,3 +528,37 @@ class imagelib:
 
         # return the resized image
         return np.array(resized)
+
+    @staticmethod
+    def rgb8882yuv(rgb):
+        """
+        reference: https://gist.github.com/Quasimondo/c3590226c924a06b276d606f4f189639
+        input is a RGB numpy array with shape (height,width,3), can be uint,int, float or double,
+        values expected in the range 0..255
+        output is a double YUV numpy array with shape (height,width,3), values in the range 0..255
+        """
+        m = np.array([[0.29900, -0.16874, 0.50000],
+                      [0.58700, -0.33126, -0.41869],
+                      [0.11400, 0.50000, -0.08131]])
+
+        yuv = np.dot(rgb, m)
+        yuv[:, :, 1:] += 128.0
+        return yuv
+
+    @staticmethod
+    def yuv2rgb888(yuv):
+        """
+        reference: https://gist.github.com/Quasimondo/c3590226c924a06b276d606f4f189639
+        input is an YUV numpy array with shape (height,width,3) can be uint,int, float or double,
+        values expected in the range 0..255
+        output is a double RGB numpy array with shape (height,width,3), values in the range 0..255
+        """
+        m = np.array([[1.0, 1.0, 1.0],
+                      [-0.000007154783816076815, -0.3441331386566162, 1.7720025777816772],
+                      [1.4019975662231445, -0.7141380310058594, 0.00001542569043522235]])
+
+        rgb = np.dot(yuv, m)
+        rgb[:, :, 0] -= 179.45477266423404
+        rgb[:, :, 1] += 135.45870971679688
+        rgb[:, :, 2] -= 226.8183044444304
+        return rgb
