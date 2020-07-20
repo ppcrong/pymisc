@@ -399,7 +399,7 @@ class imagelib:
         # resize image when both w/h are not 0
         if resize_width != 0 and resize_height != 0:
             (height, width) = (resize_height, resize_width)
-            pilimage.resize((resize_width, resize_height))
+            pilimage = pilimage.resize((resize_width, resize_height))
 
         if channel == 4:
             # RGBA
@@ -456,7 +456,7 @@ class imagelib:
         # resize image when both w/h are not 0
         if resize_width != 0 and resize_height != 0:
             (height, width) = (resize_height, resize_width)
-            pilimage.resize((resize_width, resize_height))
+            pilimage = pilimage.resize((resize_width, resize_height))
 
         if channel == 3:
             # RGB888
@@ -513,7 +513,7 @@ class imagelib:
         # resize image when both w/h are not 0
         if resize_width != 0 and resize_height != 0:
             (height, width) = (resize_height, resize_width)
-            pilimage.resize((resize_width, resize_height))
+            pilimage = pilimage.resize((resize_width, resize_height))
 
         # convert to ndarray
         buf = np.array(pilimage)
