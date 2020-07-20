@@ -12,6 +12,39 @@ class imagelib:
     logger = loglib(__name__)
 
     @staticmethod
+    def rgb88882rgb888(rgb8888, width: int, height: int):
+        """
+        RGB8888 (RGBA) to RGB888.
+
+        Parameters
+        ----------
+        rgb8888 : bytes or bytearray
+            rgb8888 image data
+        width : int
+            width of image
+        height : int
+            height of image
+
+        Returns
+        -------
+        np.ndarray
+            rgb888 image data
+        """
+
+        rgb888 = None
+
+        try:
+            if type(rgb8888) is bytes:
+                rgba = np.frombuffer(rgb8888, dtype=np.uint8).reshape(height, width, 4)
+            elif type(rgb8888) is bytearray:
+                rgba = np.array(rgb8888, dtype=np.uint8).reshape(height, width, 4)
+            rgb888 = cv2.cvtColor(rgba, cv2.COLOR_RGBA2RGB)
+        except ValueError as e:
+            imagelib.logger.error('ValueError: {}'.format(e))
+
+        return rgb888
+
+    @staticmethod
     def rgb5652rgb888(rgb565, width: int, height: int):
         """
         RGB565 to RGB888.
@@ -33,20 +66,25 @@ class imagelib:
             rgb888 image data
         """
 
-        # convert to ndarray (height, width, channel)
-        if type(rgb565) is bytes:
-            rgb565 = np.frombuffer(rgb565, dtype=np.uint8).reshape(height, width, 2)
-        elif type(rgb565) is bytearray:
-            rgb565 = np.array(rgb565, dtype=np.uint8).reshape(height, width, 2)
-        # convert WxHx2 array of uint8 into WxH array of uint16
-        byte0 = rgb565[:, :, 0].astype(np.uint16)
-        byte1 = rgb565[:, :, 1].astype(np.uint16)
-        rgb565 = (byte0 | byte1 << 8)
-        # convert 565 to 888
-        b8 = (rgb565 & MASK5) << 3
-        g8 = ((rgb565 >> 5) & MASK6) << 2
-        r8 = ((rgb565 >> (5 + 6)) & MASK5) << 3
-        rgb888 = np.dstack((r8, g8, b8)).astype(np.uint8)
+        rgb888 = None
+
+        try:
+            # convert to ndarray (height, width, channel)
+            if type(rgb565) is bytes:
+                rgb565 = np.frombuffer(rgb565, dtype=np.uint8).reshape(height, width, 2)
+            elif type(rgb565) is bytearray:
+                rgb565 = np.array(rgb565, dtype=np.uint8).reshape(height, width, 2)
+            # convert WxHx2 array of uint8 into WxH array of uint16
+            byte0 = rgb565[:, :, 0].astype(np.uint16)
+            byte1 = rgb565[:, :, 1].astype(np.uint16)
+            rgb565 = (byte0 | byte1 << 8)
+            # convert 565 to 888
+            b8 = (rgb565 & MASK5) << 3
+            g8 = ((rgb565 >> 5) & MASK6) << 2
+            r8 = ((rgb565 >> (5 + 6)) & MASK5) << 3
+            rgb888 = np.dstack((r8, g8, b8)).astype(np.uint8)
+        except ValueError as e:
+            imagelib.logger.error('ValueError: {}'.format(e))
 
         return rgb888
 
@@ -219,6 +257,39 @@ class imagelib:
         channel = len(pilimage.getbands())
 
         return width, height, channel
+
+    @staticmethod
+    def im2rgb888(buffer, width: int, height: int, channel: int):
+        """
+        convert buffer to rgb888.
+
+        Parameters
+        ----------
+        buffer : bytes or bytearray
+            image data
+        width : int
+            width of image
+        height : int
+            height of image
+        channel : int
+            color channel
+
+        Returns
+        -------
+        np.ndarray
+            rgb888 image data
+        """
+
+        rgb888 = None
+        if channel == 1:
+            return NotImplemented
+        elif channel == 2:
+            rgb888 = imagelib.rgb5652rgb888(buffer, width, height)
+        elif channel == 3:
+            rgb888 = np.frombuffer(buffer, dtype=np.uint8).reshape(height, width, 3)
+        elif channel == 4:
+            rgb888 = imagelib.rgb88882rgb888(buffer, width, height)
+        return rgb888
 
     @staticmethod
     def im2rgb565(file: str, resize_width: int = 0, resize_height: int = 0):
