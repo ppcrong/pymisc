@@ -19,7 +19,7 @@ class imagelib:
         Parameters
         ----------
         rgba : bytes or bytearray
-            rgb8888 image data
+            rgba image data
         width : int
             width of image
         height : int
@@ -43,6 +43,39 @@ class imagelib:
             imagelib.logger.error('ValueError: {}'.format(e))
 
         return rgb888
+
+    @staticmethod
+    def rgb8882rgba(rgb888, width: int, height: int):
+        """
+        RGB888 to RGBA.
+
+        Parameters
+        ----------
+        rgb888 : bytes or bytearray
+            rgb888 image data
+        width : int
+            width of image
+        height : int
+            height of image
+
+        Returns
+        -------
+        np.ndarray
+            rgba image data
+        """
+
+        rgba = None
+
+        try:
+            if type(rgb888) is bytes:
+                rgb888 = np.frombuffer(rgb888, dtype=np.uint8).reshape(height, width, 3)
+            elif type(rgb888) is bytearray:
+                rgb888 = np.array(rgb888, dtype=np.uint8).reshape(height, width, 3)
+            rgba = cv2.cvtColor(rgb888, cv2.COLOR_RGB2RGBA)
+        except ValueError as e:
+            imagelib.logger.error('ValueError: {}'.format(e))
+
+        return rgba
 
     @staticmethod
     def rgb5652rgb888(rgb565, width: int, height: int):
@@ -326,6 +359,63 @@ class imagelib:
         return rgb565
 
     @staticmethod
+    def im2rgba(file: str, resize_width: int = 0, resize_height: int = 0):
+        """
+        convert image (jpg,bmp...etc) to rgba.
+
+        Parameters
+        ----------
+        file : str
+            file name
+        resize_width : int
+            resize width, resize when both w/h are not 0
+        resize_height : int
+            resize height, resize when both w/h are not 0
+
+        Returns
+        -------
+        tuple : a tuple containing:
+            - width (int): image width
+            - height (int): image height
+            - channel (int): image channel
+            - image_info (dict): image info (format, size, mode)
+            - buf (bytes): image rgba data
+        """
+
+        # get image info
+        pilimage = imagelib.pilopen(file)
+
+        if pilimage is None:
+            imagelib.logger.error('pilimage is None!!!')
+            return 0, 0, 0, None, None
+
+        image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
+        imagelib.logger.info(image_info)
+
+        # assign image size and channel
+        (width, height) = pilimage.size
+        channel = len(pilimage.getbands())
+
+        # resize image when both w/h are not 0
+        if resize_width != 0 and resize_height != 0:
+            (height, width) = (resize_height, resize_width)
+            pilimage.resize((resize_width, resize_height))
+
+        if channel == 4:
+            # RGBA
+            pass
+        else:
+            pilimage = pilimage.convert('RGBA')
+
+        # convert to ndarray
+        buf = np.array(pilimage)
+        if buf is None:
+            imagelib.logger.error('convert image fail!!!')
+            return 0, 0, 0, None, None
+
+        return width, height, 4, image_info, buf.tobytes()
+
+    @staticmethod
     def im2rgb888(file: str, resize_width: int = 0, resize_height: int = 0):
         """
         convert image (jpg,bmp...etc) to rgb888.
@@ -372,7 +462,7 @@ class imagelib:
             # RGB888
             pass
         else:
-            pilimage.convert('RGB')
+            pilimage = pilimage.convert('RGB')
 
         # convert to ndarray
         buf = np.array(pilimage)
@@ -380,7 +470,7 @@ class imagelib:
             imagelib.logger.error('convert image fail!!!')
             return 0, 0, 0, None, None
 
-        return width, height, channel, image_info, buf
+        return width, height, 3, image_info, buf.tobytes()
 
     @staticmethod
     def im2rgb565(file: str, resize_width: int = 0, resize_height: int = 0):
@@ -439,7 +529,7 @@ class imagelib:
             # RGB565 or gray
             buf = buf.tobytes()
 
-        return width, height, channel, image_info, buf
+        return width, height, 2, image_info, buf
 
     @staticmethod
     def pilopen(img_name: str):
