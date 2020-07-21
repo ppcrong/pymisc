@@ -292,6 +292,40 @@ class imagelib:
         return width, height, channel
 
     @staticmethod
+    def buf2rgba(buffer, width: int, height: int, channel: int):
+        """
+        convert buffer to rgba.
+
+        Parameters
+        ----------
+        buffer : bytes or bytearray
+            image data
+        width : int
+            width of image
+        height : int
+            height of image
+        channel : int
+            color channel
+
+        Returns
+        -------
+        np.ndarray
+            rgba image data
+        """
+
+        rgba = None
+        if channel == 1:
+            return NotImplemented
+        elif channel == 2:
+            buffer = imagelib.rgb5652rgb888(buffer, width, height)
+            rgba = imagelib.rgb8882rgba(buffer, width, height)
+        elif channel == 3:
+            rgba = imagelib.rgb8882rgba(buffer, width, height)
+        elif channel == 4:
+            rgba = np.frombuffer(buffer, dtype=np.uint8).reshape(height, width, 4)
+        return rgba
+
+    @staticmethod
     def buf2rgb888(buffer, width: int, height: int, channel: int):
         """
         convert buffer to rgb888.
