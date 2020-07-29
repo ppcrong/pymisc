@@ -14,10 +14,12 @@ class loglib:
         format = '%(message)s'
         self.formatter = logging.Formatter(format)
 
-        # console handler
+        # console handler init
         self.consolehandler = logging.StreamHandler(sys.stdout)
         self.consolehandler.setFormatter(self.formatter)
         self.logger.addHandler(self.consolehandler)
+        # file handler init
+        self.filehandler = None
 
     @staticmethod
     def get_file_name(prefix: str = '', postfix: str = '', ext: str = '', with_ms: bool = False):
@@ -45,8 +47,10 @@ class loglib:
         # create folder if not exist
         folder = os.path.dirname(logfile)
         if not os.path.isdir(folder):
-            os.mkdir(folder)
+            import pathlib
+            pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
 
+        # file handler
         self.filehandler = logging.FileHandler(logfile)
         self.filehandler.setFormatter(self.formatter)
         self.logger.addHandler(self.filehandler)
@@ -107,3 +111,31 @@ class loglib:
         # self.logger.removeHandler(self.consolehandler)
         # self.consolehandler.flush()
         # self.consolehandler.close()
+
+
+# region [main]
+if __name__ == "__main__":
+    """
+    For console test
+    """
+
+    from loglib import loglib
+
+    logger = loglib('loglib_test')
+    logger.info('info')
+    logger.debug('debug')
+    logger.i('info')
+    logger.d('debug')
+
+    # test log file
+    logger = loglib('loglib_file')
+    log_folder = 'logs'
+    log_file = loglib.get_file_name(prefix='loglib', postfix='loglib', ext='log')
+    logger.start_log(os.path.join(log_folder, log_file))
+    logger.info('info')
+    logger.debug('debug')
+    logger.i('info')
+    logger.d('debug')
+    logger.close_log()
+
+# endregion [main]
