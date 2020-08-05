@@ -259,6 +259,49 @@ class imagelib:
         return resized
 
     @staticmethod
+    def cv2crop(image: np.ndarray, x: int = 0, y: int = 0, width: int = 0, height: int = 0):
+        """
+        image crop.
+
+        ps. cv2 only accepts RGB888 format.
+
+        Parameters
+        ----------
+        image : np.ndarray
+            image buffer
+        x : int
+            x
+        y : int
+            y
+        width : int
+            width
+        height : int
+            height
+
+        Returns
+        -------
+        np.ndarray
+            crop buffer
+        """
+        # grab the image size
+        (h, w) = image.shape[:2]
+
+        # if both the width and height are 0, then return the original image
+        if width == 0 or width > w or height == 0 or height > h:
+            imagelib.logger.error('width == 0 or width > w or height == 0 or height > h , ignore!!!')
+            return image
+
+        # convert x, y to int to avoid float type
+        x = int(x)
+        y = int(y)
+
+        # crop the image
+        crop = image[y:y + height, x:x + width]
+
+        # return the resized image
+        return crop
+
+    @staticmethod
     def getiminfo(file: str):
         """
         get image (jpg,bmp...etc) info (width, height, channel).
@@ -652,6 +695,45 @@ class imagelib:
 
         # return the resized image
         return np.array(resized)
+
+    @staticmethod
+    def pilcrop(image: np.ndarray, x: int = 0, y: int = 0, width: int = 0, height: int = 0):
+        """
+        image crop.
+
+        Parameters
+        ----------
+        image : np.ndarray
+            image buffer
+        x : int
+            x
+        y : int
+            y
+        width : int
+            width
+        height : int
+            height
+
+        Returns
+        -------
+        np.ndarray
+            crop buffer
+        """
+        # grab the image size
+        (h, w) = image.shape[:2]
+
+        # if both the width and height are 0, then return the original image
+        if width == 0 or width > w or height == 0 or height > h:
+            imagelib.logger.error('width == 0 or width > w or height == 0 or height > h , ignore!!!')
+            return image
+
+        # crop the image
+        image = Image.fromarray(image)
+        box = (x, y, x + width, y + height)
+        crop = image.crop(box)
+
+        # return the resized image
+        return np.array(crop)
 
     @staticmethod
     def rgb8882yuv(rgb):
