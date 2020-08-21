@@ -16,6 +16,7 @@ class vslib:
     logger = loglib(__name__)
 
     def __init__(self, src: int = 0, width: int = 640, height: int = 480):
+        self.src = src
         self.stream = cv2.VideoCapture(src)
         self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -57,17 +58,30 @@ class vslib:
     def is_opened(self):
         return self.stream.isOpened()
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def release(self):
         self.stream.release()
+
+    # region [with]
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.logger.info('release')
+        self.release()
+    # endregion [with]
 
 
 if __name__ == "__main__":
-    vs = vslib().start()
-    while True:
-        frame = vs.read()
-        cv2.imshow('webcam', frame)
-        if cv2.waitKey(1) == 27:
-            break
+    with vslib() as vs:
+        if not vs.is_opened():
+            print(f'open source {vs.src} fail!!!')
+        else:
+            vs.start()
+            while True:
+                frame = vs.read()
+                cv2.imshow('webcam', frame)
+                if cv2.waitKey(1) == 27:
+                    break
 
-    vs.stop()
-    cv2.destroyAllWindows()
+            vs.stop()
+            cv2.destroyAllWindows()
