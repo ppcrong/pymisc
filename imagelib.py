@@ -768,3 +768,55 @@ class imagelib:
         rgb[:, :, 1] += 135.45870971679688
         rgb[:, :, 2] -= 226.8183044444304
         return rgb
+
+    @staticmethod
+    def folder_crop_resize(folder: str, prefix_name: str, w_resize: int, h_resize: int):
+        """
+        test only, not handle exception.
+        """
+        # create folder if not exist
+        convert_folder = f'{folder}/convert/'
+        import os
+        if not os.path.isdir(convert_folder):
+            import pathlib
+            pathlib.Path(convert_folder).mkdir(parents=True, exist_ok=True)
+
+        files = []
+
+        # get all files
+        import os
+        for r, d, f in os.walk(folder):
+            # append full path with file name
+            full_paths = [os.path.join(r, file) for file in f]
+            files.extend(full_paths)
+
+        # crop/resize each file
+        for i, file in enumerate(files):
+            file_new = f'{convert_folder}{prefix_name}_{w_resize}x{h_resize}_{(i + 1):03}.raw'
+            imagelib.file_crop_resize(file, file_new, w_resize, h_resize)
+
+    @staticmethod
+    def file_crop_resize(file: str, file_new: str, w_resize: int, h_resize: int):
+        """
+        test only, not handle exception.
+        """
+        w, h, c, image_info, rgb888 = imagelib.im2rgb888(file)
+
+        rgb888 = np.frombuffer(rgb888, dtype=np.uint8).reshape(h, w, 3)
+
+        if w > h:
+            x = int((w - h) / 2)
+            y = 0
+            w = h
+            rgb888 = imagelib.cv2crop(rgb888, x, y, w, h)
+        elif w < h:
+            x = 0
+            y = int((h - w) / 2)
+            h = w
+            rgb888 = imagelib.cv2crop(rgb888, x, y, w, h)
+
+        rgb888 = imagelib.cv2resize(rgb888, w_resize, h_resize)
+        rgb565 = imagelib.rgb8882rgb565(rgb888)
+
+        from filelib import filelib
+        filelib.file_write_binary(rgb565, file_new)
