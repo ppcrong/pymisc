@@ -44,9 +44,15 @@ class serlib:
             self.logger.error('serial is None!!!')
 
     def write_data(self, data: str):
+        """
+        put write data into queue (write_thread check queue to write)
+        """
         self.bufw.put(data)
 
     def write(self, data: str):
+        """
+        direct write data
+        """
         if self.serial:
             try:
                 len_write = self.serial.write(data.encode())
@@ -60,6 +66,9 @@ class serlib:
             self.logger.error('serial is None!!!')
 
     def read(self, size: int):
+        """
+        direct read data
+        """
         ret = None
         if self.serial:
             try:
@@ -149,13 +158,13 @@ class serlib:
 
     @staticmethod
     def devices():
-        ps = serlib.comports()
-        return [p.device for p in ps]
+        ports = serlib.comports()
+        return [p.device for p in ports]
 
     @staticmethod
     def descriptions():
-        ps = serlib.comports()
-        return [p.description for p in ps]
+        ports = serlib.comports()
+        return [p.description for p in ports]
 
 
 if __name__ == "__main__":
