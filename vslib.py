@@ -61,6 +61,12 @@ class vslib:
     def release(self):
         self.stream.release()
 
+    def getinfo(self):
+        w = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
+        h = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        fps = self.stream.get(cv2.CAP_PROP_FPS)
+        return w, h, fps
+
     # region [with]
     def __enter__(self):
         return self
@@ -72,16 +78,39 @@ class vslib:
 
 
 if __name__ == "__main__":
+    import datetime
+
     with vslib() as vs:
         if not vs.is_opened():
             print(f'open source {vs.src} fail!!!')
         else:
             vs.start()
+            w, h, fps = vs.getinfo()
+            print(f'w: {w}, h: {h}, fps: {fps}')
+            print()
             while True:
+                time_start = datetime.datetime.now()
                 frame = vs.read()
+                time_end = datetime.datetime.now()
+                print(f'time: {(time_end - time_start).total_seconds() * 1000 : 0.3f} ms')
                 cv2.imshow('webcam', frame)
                 if cv2.waitKey(1) == 27:
                     break
+
+            # Number of frames to capture
+            num_frames = 120
+            # start time
+            start = datetime.datetime.now()
+            # grab frames
+            for i in range(0, num_frames):
+                frame = vs.read()
+            # end time
+            end = datetime.datetime.now()
+            # time elapsed
+            seconds = (end - start).total_seconds()
+            # fps
+            fps = num_frames / seconds
+            print(f'fps: {fps : 0.3f}')
 
             vs.stop()
             cv2.destroyAllWindows()
