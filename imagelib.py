@@ -792,7 +792,7 @@ class imagelib:
 
         # crop/resize each file
         for i, file in enumerate(files):
-            file_new = f'{convert_folder}{prefix_name}_{w_resize}x{h_resize}_{(i + 1):03}.raw'
+            file_new = f'{convert_folder}{prefix_name}_{w_resize}x{h_resize}_{(i + 1):03}'
             imagelib.file_crop_resize(file, file_new, w_resize, h_resize)
 
     @staticmethod
@@ -816,7 +816,8 @@ class imagelib:
             rgb888 = imagelib.cv2crop(rgb888, x, y, w, h)
 
         rgb888 = imagelib.cv2resize(rgb888, w_resize, h_resize)
+        cv2.imwrite(f'{file_new}.jpg', rgb888[:, :, ::-1])  # convert rgb888 to bgr888 for cv2 save image
         rgb565 = imagelib.rgb8882rgb565(rgb888)
 
         from filelib import filelib
-        filelib.file_write_binary(rgb565, file_new)
+        filelib.file_write_binary(rgb565, f'{file_new}.raw')
