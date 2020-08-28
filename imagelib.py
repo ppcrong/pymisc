@@ -573,38 +573,17 @@ class imagelib:
             - buf (bytes): image rgb565 data
         """
 
-        # get image info
-        pilimage = imagelib.pilopen(file)
-
-        if pilimage is None:
-            imagelib.logger.error('pilimage is None!!!')
-            return 0, 0, 0, None, None
-
-        image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
-        imagelib.logger.info(image_info)
-
-        # assign image size and channel
-        (width, height) = pilimage.size
-        channel = len(pilimage.getbands())
-
-        # resize image when both w/h are not 0
-        if resize_width != 0 and resize_height != 0:
-            (height, width) = (resize_height, resize_width)
-            pilimage = pilimage.resize((resize_width, resize_height))
+        # get RGB888 first
+        width, height, _, image_info, buf888 = imagelib.im2rgb888(file, resize_width, resize_height)
 
         # convert to ndarray
-        buf = np.array(pilimage)
-        if buf is None:
+        rgb888 = np.frombuffer(buf888, dtype=np.uint8).reshape(height, width, 3)
+        if rgb888 is None:
             imagelib.logger.error('convert image fail!!!')
             return 0, 0, 0, None, None
 
-        # for pillow, mode should be 'RGB' or 'L'
-        if channel >= 3:
-            # RGB888 or RGBA
-            buf = imagelib.rgb8882rgb565(buf)
-        elif channel <= 2:
-            # RGB565 or gray
-            buf = buf.tobytes()
+        # convert to RGB565
+        buf = imagelib.rgb8882rgb565(rgb888)
 
         return width, height, 2, image_info, buf
 
