@@ -478,8 +478,8 @@ class imagelib:
             (height, width) = (resize_height, resize_width)
             pilimage = pilimage.resize((resize_width, resize_height))
 
-        if channel == 4:
-            # RGBA
+        # Modes: https://pillow.readthedocs.io/en/stable/handbook/concepts.html#modes
+        if pilimage.mode == 'RGBA':
             pass
         else:
             pilimage = pilimage.convert('RGBA')
@@ -535,8 +535,8 @@ class imagelib:
             (height, width) = (resize_height, resize_width)
             pilimage = pilimage.resize((resize_width, resize_height))
 
-        if channel == 3:
-            # RGB888
+        # Modes: https://pillow.readthedocs.io/en/stable/handbook/concepts.html#modes
+        if pilimage.mode == 'RGB':
             pass
         else:
             pilimage = pilimage.convert('RGB')
