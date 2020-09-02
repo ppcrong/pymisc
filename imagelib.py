@@ -435,14 +435,23 @@ class imagelib:
 
         rgb565 = None
         if channel == 1:
-            return NotImplemented
+            if type(buffer) is bytes:
+                image = Image.frombytes('L', (width, height), buffer, 'raw')
+            elif type(buffer) is bytearray:
+                image = Image.frombytes('L', (width, height), bytes(buffer), 'raw')
+            rgb888 = image.convert('RGB')
+            rgb888 = np.array(rgb888)
+            rgb565 = imagelib.rgb8882rgb565(rgb888)
         elif channel == 2:
-            rgb565 = np.frombuffer(buffer, dtype=np.uint8).reshape(height, width, 2)
+            pass
         elif channel == 3:
             rgb565 = imagelib.rgb8882rgb565(buffer)
         elif channel == 4:
             buffer = imagelib.rgba2rgb888(buffer, width, height)
             rgb565 = imagelib.rgb8882rgb565(buffer)
+
+        # bytes to np.ndarray
+        rgb565 = np.frombuffer(rgb565, dtype=np.uint8).reshape(height, width, 2)
         return rgb565
 
     @staticmethod
