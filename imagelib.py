@@ -358,7 +358,12 @@ class imagelib:
 
         rgba = None
         if channel == 1:
-            return NotImplemented
+            if type(buffer) is bytes:
+                image = Image.frombytes('L', (width, height), buffer, 'raw')
+            elif type(buffer) is bytearray:
+                image = Image.frombytes('L', (width, height), bytes(buffer), 'raw')
+            rgba = image.convert('RGBA')
+            rgba = np.array(rgba)
         elif channel == 2:
             buffer = imagelib.rgb5652rgb888(buffer, width, height)
             rgba = imagelib.rgb8882rgba(buffer, width, height)
@@ -392,7 +397,12 @@ class imagelib:
 
         rgb888 = None
         if channel == 1:
-            return NotImplemented
+            if type(buffer) is bytes:
+                image = Image.frombytes('L', (width, height), buffer, 'raw')
+            elif type(buffer) is bytearray:
+                image = Image.frombytes('L', (width, height), bytes(buffer), 'raw')
+            rgb888 = image.convert('RGB')
+            rgb888 = np.array(rgb888)
         elif channel == 2:
             rgb888 = imagelib.rgb5652rgb888(buffer, width, height)
         elif channel == 3:
