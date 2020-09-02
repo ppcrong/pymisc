@@ -21,7 +21,7 @@ class vslib:
         if width and height:
             self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-        self.logger.info(f'(w, h, fps, fcounts): {self.getinfo()}')
+        self.logger.info(f'(w, h, fps, fcnt): {self.getinfo()}')
         (self.grabbed, self.frame) = self.stream.read()
         self.started = False
         self.read_lock = Lock()
@@ -83,8 +83,8 @@ class vslib:
         w = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
         h = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
         fps = self.stream.get(cv2.CAP_PROP_FPS)
-        fcounts = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
-        return w, h, fps, fcounts
+        fcnt = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
+        return w, h, fps, fcnt
 
     # region [with]
     def __enter__(self):
@@ -93,6 +93,7 @@ class vslib:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.logger.info()
+        self.stop()
         self.release()
     # endregion [with]
 
@@ -141,10 +142,10 @@ if __name__ == "__main__":
         if not vs.is_opened():
             print(f'open source {vs.src} fail!!!')
         else:
-            _, _, fps, fcounts = vs.getinfo()
+            _, _, fps, fcnt = vs.getinfo()
             delay = int(1000 / fps)
             print(f'delay: {delay} ms')
-            print(f'video duration: {delay * fcounts} ms')
+            print(f'video duration: {delay * fcnt} ms')
             while vs.grabbed:
                 # NOTE!!!set pos_frames will take around 70~140ms
                 # set frame position
