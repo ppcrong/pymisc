@@ -138,7 +138,7 @@ if __name__ == "__main__":
             cv2.destroyAllWindows()
 
     # video
-    with vslib('d:/_PROJECT/KL720/Kobe/yolov3_416.mp4') as vs:
+    with vslib('asset/4K.mp4') as vs:
         if not vs.is_opened():
             print(f'open source {vs.src} fail!!!')
         else:
