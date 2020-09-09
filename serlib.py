@@ -168,6 +168,9 @@ class serlib:
 
 
 if __name__ == "__main__":
+    """
+    For console test
+    """
     with serlib(port='COM10') as s:
         if not s.is_opened():
             print(f'open {s.port} fail!!!')

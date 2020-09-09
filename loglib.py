@@ -46,7 +46,7 @@ class loglib:
     def start_log(self, logfile: str):
         # create folder if not exist
         folder = os.path.dirname(logfile)
-        if not os.path.isdir(folder):
+        if not os.path.exists(folder):
             import pathlib
             pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
 
@@ -118,24 +118,4 @@ if __name__ == "__main__":
     """
     For console test
     """
-
-    from loglib import loglib
-
-    logger = loglib('loglib_test')
-    logger.info('info')
-    logger.debug('debug')
-    logger.i('info')
-    logger.d('debug')
-
-    # test log file
-    logger = loglib('loglib_file')
-    log_folder = 'logs'
-    log_file = loglib.get_file_name(prefix='loglib', postfix='loglib', ext='log')
-    logger.start_log(os.path.join(log_folder, log_file))
-    logger.info('info')
-    logger.debug('debug')
-    logger.i('info')
-    logger.d('debug')
-    logger.close_log()
-
 # endregion [main]

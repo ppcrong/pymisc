@@ -93,17 +93,4 @@ if __name__ == "__main__":
     """
     For console test
     """
-
-    from filelib import filelib
-
-    write_result = filelib.file_write_binary(None, 'd:/temp/test.txt')
-    buf_write = [51, 52, 53]
-    write_result = filelib.file_write_binary(buf_write, None)
-    write_result = filelib.file_write_binary(buf_write, '')
-    write_result = filelib.file_write_binary(buf_write, 'd:/temp/test.txt')
-    write_result = filelib.file_write_binary(bytearray(buf_write), 'd:/temp/test.txt')
-    buf_read = filelib.file_read_binary(None)
-    buf_read = filelib.file_read_binary('')
-    buf_read = filelib.file_read_binary('d:/temp/test.txt')
-    print(buf_read)
 # endregion [main]
