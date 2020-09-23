@@ -1,7 +1,11 @@
 from ctypes import *
 
+from loglib import loglib
+
 
 class ctypeslib:
+
+    logger = loglib(__name__)
 
     # region [https://tinyurl.com/y933rm4s]
     @staticmethod
@@ -39,9 +43,11 @@ class ctypeslib:
         """
 
         if not dll:
+            ctypeslib.logger.error('dll_khost is None!!!')
             return None
 
         try:
             return getattr(dll, func_name)
         except AttributeError as err:
+            ctypeslib.logger.error(f'{func_name} is None!!!')
             return None
