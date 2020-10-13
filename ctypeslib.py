@@ -43,7 +43,7 @@ class ctypeslib:
         """
 
         if not dll:
-            ctypeslib.logger.error('dll_khost is None!!!')
+            ctypeslib.logger.error('dll is None!!!')
             return None
 
         try:
