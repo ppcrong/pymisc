@@ -44,16 +44,20 @@ class loglib:
         return filename
 
     def start_log(self, logfile: str):
-        # create folder if not exist
-        folder = os.path.dirname(logfile)
-        if not os.path.exists(folder):
-            import pathlib
-            pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
+        self.create_folder(logfile)
 
         # file handler
         self.filehandler = logging.FileHandler(logfile)
         self.filehandler.setFormatter(self.formatter)
         self.logger.addHandler(self.filehandler)
+
+    @staticmethod
+    def create_folder(file_path: str):
+        # create folder if not exist
+        folder = os.path.dirname(file_path)
+        if not os.path.exists(folder):
+            import pathlib
+            pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
 
     # region [just log]
     def d(self, msg: str = ''):
@@ -75,6 +79,33 @@ class loglib:
         self.logger.log(level, msg)
 
     # endregion [just log]
+
+    # region [log with time and level]
+    def d1(self, msg: str = ''):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')[:-3]
+        self.logger.debug(f'D/{timestamp} {msg}')
+
+    def i1(self, msg: str = ''):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')[:-3]
+        self.logger.debug(f'I/{timestamp} {msg}')
+
+    def w1(self, msg: str = ''):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')[:-3]
+        self.logger.debug(f'W/{timestamp} {msg}')
+
+    def e1(self, msg: str = ''):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')[:-3]
+        self.logger.debug(f'E/{timestamp} {msg}')
+
+    def c1(self, msg: str = ''):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')[:-3]
+        self.logger.debug(f'C/{timestamp} {msg}')
+
+    def l1(self, level: int, msg: str = ''):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')[:-3]
+        self.logger.log(level, f'{logging.getLevelName(level)}/{timestamp} {msg}')
+
+    # endregion [log with time and level]
 
     # region [log with caller info]
     def debug(self, msg: str = ''):
