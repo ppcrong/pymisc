@@ -44,7 +44,7 @@ class loglib:
         return filename
 
     def start_log(self, logfile: str):
-        self.create_folder(logfile)
+        self.create_parent_folder(logfile)
 
         # file handler
         self.filehandler = logging.FileHandler(logfile)
@@ -52,12 +52,23 @@ class loglib:
         self.logger.addHandler(self.filehandler)
 
     @staticmethod
-    def create_folder(file_path: str):
-        # create folder if not exist
+    def create_parent_folder(file_path: str):
+        """
+        create file's parent folder if not exist
+        """
         folder = os.path.dirname(file_path)
         if not os.path.exists(folder):
             import pathlib
             pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
+
+    @staticmethod
+    def create_folder(folder_path: str):
+        """
+        create folder if not exist
+        """
+        if not os.path.exists(folder_path):
+            import pathlib
+            pathlib.Path(folder_path).mkdir(parents=True, exist_ok=True)
 
     # region [just log]
     def d(self, msg: str = ''):
