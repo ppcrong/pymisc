@@ -9,7 +9,7 @@ MASK6 = 0b111111
 
 
 class imagelib:
-    logger = loglib(__name__)
+    slogger = loglib(__name__)
 
     @staticmethod
     def rgba2rgb888(rgba, width: int, height: int):
@@ -40,7 +40,7 @@ class imagelib:
                 rgba = np.array(rgba, dtype=np.uint8).reshape(height, width, 4)
             rgb888 = cv2.cvtColor(rgba, cv2.COLOR_RGBA2RGB)
         except ValueError as e:
-            imagelib.logger.error('ValueError: {}'.format(e))
+            imagelib.slogger.error('ValueError: {}'.format(e))
 
         return rgb888
 
@@ -73,7 +73,7 @@ class imagelib:
                 rgb888 = np.array(rgb888, dtype=np.uint8).reshape(height, width, 3)
             rgba = cv2.cvtColor(rgb888, cv2.COLOR_RGB2RGBA)
         except ValueError as e:
-            imagelib.logger.error('ValueError: {}'.format(e))
+            imagelib.slogger.error('ValueError: {}'.format(e))
 
         return rgba
 
@@ -117,7 +117,7 @@ class imagelib:
             r8 = ((rgb565 >> (5 + 6)) & MASK5) << 3
             rgb888 = np.dstack((r8, g8, b8)).astype(np.uint8)
         except ValueError as e:
-            imagelib.logger.error('ValueError: {}'.format(e))
+            imagelib.slogger.error('ValueError: {}'.format(e))
 
         return rgb888
 
@@ -194,7 +194,7 @@ class imagelib:
         while True:
             # imagelib.logger.info('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
-                imagelib.logger.error('file_name is None or empty!!!')
+                imagelib.slogger.error('file_name is None or empty!!!')
                 break
 
             buf = cv2.imread(img_name)
@@ -288,7 +288,7 @@ class imagelib:
 
         # if both the width and height are 0, then return the original image
         if width == 0 or width > w or height == 0 or height > h:
-            imagelib.logger.error('width == 0 or width > w or height == 0 or height > h , ignore!!!')
+            imagelib.slogger.error('width == 0 or width > w or height == 0 or height > h , ignore!!!')
             return image
 
         # convert x, y to int to avoid float type
@@ -323,7 +323,7 @@ class imagelib:
         pilimage = imagelib.pilopen(file)
 
         if pilimage is None:
-            imagelib.logger.error('pilimage is None!!!')
+            imagelib.slogger.error('pilimage is None!!!')
             return 0, 0, 0
 
         # assign image size
@@ -482,11 +482,11 @@ class imagelib:
         pilimage = imagelib.pilopen(file)
 
         if pilimage is None:
-            imagelib.logger.error('pilimage is None!!!')
+            imagelib.slogger.error('pilimage is None!!!')
             return 0, 0, 0, None, None
 
         image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
-        imagelib.logger.info(image_info)
+        imagelib.slogger.info(image_info)
 
         # assign image size and channel
         (width, height) = pilimage.size
@@ -506,7 +506,7 @@ class imagelib:
         # convert to ndarray
         buf = np.array(pilimage)
         if buf is None:
-            imagelib.logger.error('convert image fail!!!')
+            imagelib.slogger.error('convert image fail!!!')
             return 0, 0, 0, None, None
 
         return width, height, 4, image_info, buf.tobytes()
@@ -539,11 +539,11 @@ class imagelib:
         pilimage = imagelib.pilopen(file)
 
         if pilimage is None:
-            imagelib.logger.error('pilimage is None!!!')
+            imagelib.slogger.error('pilimage is None!!!')
             return 0, 0, 0, None, None
 
         image_info = dict({'format': pilimage.format, 'size': pilimage.size, 'mode': pilimage.mode})
-        imagelib.logger.info(image_info)
+        imagelib.slogger.info(image_info)
 
         # assign image size and channel
         (width, height) = pilimage.size
@@ -563,7 +563,7 @@ class imagelib:
         # convert to ndarray
         buf = np.array(pilimage)
         if buf is None:
-            imagelib.logger.error('convert image fail!!!')
+            imagelib.slogger.error('convert image fail!!!')
             return 0, 0, 0, None, None
 
         return width, height, 3, image_info, buf.tobytes()
@@ -598,7 +598,7 @@ class imagelib:
         # convert to ndarray
         rgb888 = np.frombuffer(buf888, dtype=np.uint8).reshape(height, width, 3)
         if rgb888 is None:
-            imagelib.logger.error('convert image fail!!!')
+            imagelib.slogger.error('convert image fail!!!')
             return 0, 0, 0, None, None
 
         # convert to RGB565
@@ -627,17 +627,17 @@ class imagelib:
         while True:
             # imagelib.logger.info('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
-                imagelib.logger.error('file_name is None or empty!!!')
+                imagelib.slogger.error('file_name is None or empty!!!')
                 break
 
             try:
                 buf = Image.open(img_name)
             except FileNotFoundError as e:
-                imagelib.logger.error('FileNotFoundError: {}'.format(e))
+                imagelib.slogger.error('FileNotFoundError: {}'.format(e))
             except UnidentifiedImageError as e:
-                imagelib.logger.error('UnidentifiedImageError: {}'.format(e))
+                imagelib.slogger.error('UnidentifiedImageError: {}'.format(e))
             except ValueError as e:
-                imagelib.logger.error('ValueError: {}'.format(e))
+                imagelib.slogger.error('ValueError: {}'.format(e))
 
             break
 
@@ -722,7 +722,7 @@ class imagelib:
 
         # if both the width and height are 0, then return the original image
         if width == 0 or width > w or height == 0 or height > h:
-            imagelib.logger.error('width == 0 or width > w or height == 0 or height > h , ignore!!!')
+            imagelib.slogger.error('width == 0 or width > w or height == 0 or height > h , ignore!!!')
             return image
 
         # crop the image

@@ -12,10 +12,10 @@ class vslib:
     reference: https://gist.github.com/allskyee/7749b9318e914ca45eb0a1000a81bf56
     """
 
-    thread = None
-    logger = loglib(__name__)
-
     def __init__(self, src=0, width: int = 0, height: int = 0):
+        self.update_thread = None
+        self.logger = loglib(__name__)
+
         self.src = src
         self.stream = cv2.VideoCapture(src)
         if width and height:
@@ -32,8 +32,8 @@ class vslib:
             self.logger.warning('already started!!!')
             return None
         self.started = True
-        self.thread = Thread(target=self.update, args=())
-        self.thread.start()
+        self.update_thread = Thread(target=self.update, args=())
+        self.update_thread.start()
         return self
 
     def update(self):
@@ -55,8 +55,8 @@ class vslib:
 
     def stop(self):
         self.started = False
-        if self.thread and self.thread.is_alive():
-            self.thread.join()
+        if self.update_thread and self.update_thread.is_alive():
+            self.update_thread.join()
 
     # endregion [camera]
 

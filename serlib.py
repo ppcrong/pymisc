@@ -11,9 +11,8 @@ class serlib:
     The library for serial port.
     """
 
-    logger = loglib(__name__)
-
     def __init__(self, port: str, baudrate: int = 115200):
+        self.logger = loglib(__name__)
         self.port = port
         self.serial = None
         self.bufr = queue.Queue()
