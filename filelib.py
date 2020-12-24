@@ -25,7 +25,6 @@ class filelib:
         ret = True
 
         while True:
-            # filelib.logger.info('file_name: {}'.format(file_name))
             if not file_name or file_name == '':
                 filelib.slogger.error('file_name is None or empty!!!')
                 ret = False
@@ -70,7 +69,6 @@ class filelib:
         buf = None
 
         while True:
-            # filelib.logger.info('file_name: {}'.format(file_name))
             if not file_name or file_name == '':
                 filelib.slogger.error('file_name is None or empty!!!')
                 break

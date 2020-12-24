@@ -192,7 +192,6 @@ class imagelib:
         buf = None
 
         while True:
-            # imagelib.logger.info('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
                 imagelib.slogger.error('file_name is None or empty!!!')
                 break
@@ -625,7 +624,6 @@ class imagelib:
         buf = None
 
         while True:
-            # imagelib.logger.info('file_name: {}'.format(file_name))
             if not img_name or img_name == '':
                 imagelib.slogger.error('file_name is None or empty!!!')
                 break
