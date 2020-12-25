@@ -159,27 +159,27 @@ class loglib:
     # region [log with caller info]
     @_init_console
     def debug(self, msg: str = ''):
-        self.logger.debug('D/{} {}'.format(printlib.get_caller_info(2), msg))
+        self.logger.debug('D/{} {}'.format(printlib.get_caller_info(3), msg))
 
     @_init_console
     def info(self, msg: str = ''):
-        self.logger.info('I/{} {}'.format(printlib.get_caller_info(2), msg))
+        self.logger.info('I/{} {}'.format(printlib.get_caller_info(3), msg))
 
     @_init_console
     def warning(self, msg: str = ''):
-        self.logger.warning('W/{} {}'.format(printlib.get_caller_info(2), msg))
+        self.logger.warning('W/{} {}'.format(printlib.get_caller_info(3), msg))
 
     @_init_console
     def error(self, msg: str = ''):
-        self.logger.error('E/{} {}'.format(printlib.get_caller_info(2), msg))
+        self.logger.error('E/{} {}'.format(printlib.get_caller_info(3), msg))
 
     @_init_console
     def critical(self, msg: str = ''):
-        self.logger.critical('C/{} {}'.format(printlib.get_caller_info(2), msg))
+        self.logger.critical('C/{} {}'.format(printlib.get_caller_info(3), msg))
 
     @_init_console
     def log(self, level: int, msg: str = ''):
-        self.logger.log(level, '{}/{} {}'.format(logging.getLevelName(level), printlib.get_caller_info(2), msg))
+        self.logger.log(level, '{}/{} {}'.format(logging.getLevelName(level), printlib.get_caller_info(3), msg))
 
     # endregion [log with caller info]
 
