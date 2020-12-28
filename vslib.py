@@ -14,7 +14,8 @@ class vslib:
 
     def __init__(self, src=0, width: int = 0, height: int = 0):
         self.update_thread = None
-        self.logger = loglib(__name__)
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')
+        self.logger = loglib(f'{__name__}_time{timestamp}')
 
         self.src = src
         self.stream = cv2.VideoCapture(src)

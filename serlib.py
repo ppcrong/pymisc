@@ -1,3 +1,4 @@
+import datetime
 import queue
 from concurrent.futures.thread import ThreadPoolExecutor
 
@@ -12,7 +13,8 @@ class serlib:
     """
 
     def __init__(self, port: str, baudrate: int = 115200):
-        self.logger = loglib(__name__)
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S.%f')
+        self.logger = loglib(f'{__name__}_p{port}_time{timestamp}')
         self.port = port
         self.serial = None
         self.bufr = queue.Queue()
