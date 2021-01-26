@@ -13,17 +13,37 @@ class pyjlink:
         self.logger = loglib(f'{__name__}_time{timestamp}')
 
     def init(self, dll_path: str = None):
+        """
+        [symptom]
+            exception occurred when using dll in dll_path:
+            Exception ignored in: <function JLink.__del__ at 0x...>
+            OSError: exception: access violation writing 0x...
+
+        [workaround]
+            1. first, use installed jlink dll
+
+            2. if not install jlink, then use dll in dll_path
+        """
         jlink = None
         try:
-            if dll_path and not dll_path.isspace():
-                jlink = pylink.JLink(lib=pylink.jlink.library.Library(dllpath=dll_path))
-            else:
-                jlink = pylink.JLink()
+            jlink = pylink.JLink()
         except Exception as e:
             self.logger.error(f'{type(e).__name__}!!! {e}')
+        finally:
+            if not jlink:
+                self.logger.info(f'maybe jlink is not installed!!! use dll in dll_path...')
+                if dll_path and not dll_path.isspace():
+                    try:
+                        jlink = pylink.JLink(lib=pylink.jlink.library.Library(dllpath=dll_path))
+                    except Exception as e:
+                        self.logger.error(f'{type(e).__name__}!!! {e}')
+                else:
+                    self.logger.info(f'dll_path is invalid or empty!!!')
 
         if jlink:
             self.logger.info(f'jlink.version: {jlink.version}')
+        else:
+            self.logger.info(f'jlink is None!!!')
         return jlink
 
     def deinit(self, jlink: pylink.JLink):
