@@ -5,6 +5,7 @@ class syslib:
     @staticmethod
     def get_platform():
         platforms = {
+            'linux': 'Linux',
             'linux1': 'Linux',
             'linux2': 'Linux',
             'darwin': 'OS X',
