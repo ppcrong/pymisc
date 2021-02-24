@@ -53,3 +53,16 @@ class printlib:
             return "{} [{}.{}#{}]".format(timestamp, the_class, the_method, the_line_number)
         else:
             return "{} [{}#{}]".format(timestamp, the_method, the_line_number)
+
+    @staticmethod
+    def draw_percent(percent, text, bar_len=20):
+        import sys
+        sys.stdout.write('\r')
+        progress = ''
+        for i in range(bar_len):
+            if i < int(bar_len * percent):
+                progress += '='
+            else:
+                progress += ' '
+        sys.stdout.write(f'[ {progress} ] {percent * 100:.2f}%...{text}...')
+        sys.stdout.flush()
