@@ -79,8 +79,8 @@ class pyjlink:
 
                     # set device xml path
                     if device_xml and not device_xml.isspace():
-                        ret = jlink.exec_command(f'JLinkDevicesXMLPath = {device_xml}')
-                        self.logger.i(f'\t\texec_command (JLinkDevicesXMLPath={device_xml}) ret: {ret}')
+                        ret_code = jlink.exec_command(f'JLinkDevicesXMLPath = {device_xml}')
+                        self.logger.i(f'\t\texec_command (JLinkDevicesXMLPath={device_xml}) ret_code: {ret_code}')
 
                     # connect jlink
                     jlink.connect(chip_name=chip_name, speed=speed)
@@ -88,10 +88,8 @@ class pyjlink:
 
             except Exception as e:
                 self.logger.error(f'{type(e).__name__}!!! {e}')
-                ret = False
                 break
 
-            ret = True
             break
 
         return ret
