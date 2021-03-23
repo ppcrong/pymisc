@@ -1,4 +1,14 @@
+import enum
+
 from loglib import loglib
+
+
+class FILE_FMT(enum.IntEnum):
+    FOLDER = 0
+    IMAGE = FOLDER + 1
+    VIDEO = IMAGE + 1
+    JSON = VIDEO + 1
+    BIN = JSON + 1
 
 
 class filelib:
@@ -84,6 +94,23 @@ class filelib:
             break
 
         return buf
+
+    @staticmethod
+    def get_format(file_name: str):
+        from pathlib import Path
+        if Path(file_name).is_dir():
+            return FILE_FMT.FOLDER
+        else:
+            import mimetypes
+            fmt, _ = mimetypes.guess_type(file_name)
+            if fmt.startswith('video'):
+                return FILE_FMT.VIDEO
+            elif fmt.startswith('image'):
+                return FILE_FMT.IMAGE
+            elif fmt.endswith('json'):
+                return FILE_FMT.JSON
+            elif fmt.endswith('octet-stream'):
+                return FILE_FMT.BIN
 
 
 # region [main]
