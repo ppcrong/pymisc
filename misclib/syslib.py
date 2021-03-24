@@ -15,3 +15,17 @@ class syslib:
             return sys.platform
 
         return platforms[sys.platform]
+
+    @staticmethod
+    def is_raspberry_pi():
+        """
+        ref: https://stackoverflow.com/questions/41164147/raspberry-pi-python-detect-os
+        """
+        try:
+            import RPi.GPIO
+            ret = True
+        except (ImportError, RuntimeError) as e:
+            print(e)
+            ret = False
+
+        return ret
